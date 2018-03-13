@@ -1,0 +1,24 @@
+{% extends 'base.html' %} {% block content %}
+
+
+
+<form method="POST" action="{{url_for('excuse_show', excuse_id=excuse.id, student_id=student.id)}}?_method=PATCH">
+  <input type="text" value="{{excuse.content}}" name="content">
+  
+  <select name="is_believable">
+    {% if is_believable %}
+      <option value="True" selected=selected>True</option>
+      <option value="">False</option>
+    {% else %}
+      <option value="True">True</option>
+      <option value="" selected=selected>False</option>
+    {% endif %}
+  </select>
+  <input type="submit" value="Refine Excuse">
+</form>
+
+<!-- <form method="POST" action="{{url_for('show', id=student.id)}}?_method=DELETE">
+  <input type="submit" value="X">
+</form> -->
+
+{% endblock %}

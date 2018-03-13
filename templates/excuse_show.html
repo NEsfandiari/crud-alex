@@ -1,0 +1,25 @@
+{% extends 'base.html' %} {% block content %}
+  
+<p>
+    {{student.first_name}} {{student.last_name}}
+  </p>
+
+  <p>
+    Reason: {{ excuse.content }}
+  </p>
+
+  <p>
+    Is this excuse belivable? {{ excuse.is_believable }}
+  </p>
+  <p>
+
+    Is this student a slacker? {{ slacker }}
+  </p>
+
+  <a href="{{url_for('excuse_edit', excuse_id=excuse.id, student_id=student.id)}}">Edit {{ student.first_name }}</a>
+</div>
+
+<!-- <form method="POST" action="{{url_for('show', id=student.id)}}?_method=DELETE">
+  <input type="submit" value="X">
+</form> -->
+{% endblock %}

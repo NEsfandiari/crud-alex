@@ -20,7 +20,7 @@ class Student(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.Text)
     last_name = db.Column(db.Text)
-    excuses = db.relationship('Excuse', backref='student', lazy='dynamic')
+    excuses = db.relationship('Excuse', backref='student', lazy='joined')
 
     def __init__(self, first_name, last_name):
         self.first_name = first_name
@@ -32,7 +32,7 @@ class Excuse(db.Model):
     __tablename__ = "excuses"
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.Text)
+    content = db.Column(db.Text)
     is_believable = db.Column(db.Boolean)
     student_id = db.Column(db.Integer, db.ForeignKey('students.id'))
 
@@ -88,39 +88,48 @@ def show(id):
 #               EXCUSES ROUTES
 # =========================================
 
-
 @app.route('/students/<int:student_id>/excuses', methods=["GET", "POST"])
-def excuse_index():
-    # if request.method == 'POST':
-    #     new_excuse = Excuse(request.form['content'],
-    #                         request.form['is_believable'])
-    #     db.session.add(new_excuse)
-    #     db.session.commit()
-    #     return redirect(url_for('excuse_index'))
-    return render_template('excuse_index.html', excuses=Excuse.query.all())
+def excuse_index(student_id):
+    if request.method == 'POST':
+        new_excuse = Excuse(request.form.get('content'),
+                            bool(request.form.get('is_believable')),
+                            student_id)
+        db.session.add(new_excuse)
+        db.session.commit()
+        return redirect(url_for('excuse_index', student_id=student_id))
+    found_student = Student.query.get(student_id)
+    return render_template('excuse_index.html', student=found_student)
 
 
-# @app.route('/students/<int:student_id>/excuses/new')
-# def excuse_new():
-#     return render_template('excuse_new.html')
+@app.route('/students/<int:student_id>/excuses/new')
+def excuse_new(student_id):
+    return render_template('excuse_new.html', student_id=student_id)
 
-# @app.route('/students/<int:student_id>/excuses/excuse_id/edit')
-# def excuse_edit(id):
-#     return render_template('excuse_edit.html', excuse=excuse.query.get(id))
+@app.route('/students/<int:student_id>/excuses/<int:excuse_id>/edit')
+def excuse_edit(student_id, excuse_id):
+    found_student = Student.query.get(student_id)
+    return render_template('excuse_edit.html', excuse=Excuse.query.get(excuse_id), student=found_student)
 
-# @app.route(
-#     '/students/<int:student_id>/excuses/<int:excuse_id>',
-#     methods=["GET", "PATCH", "DELETE"])
-# def excuse_show(id):
-#     found_excuse = excuse.query.get(id)
-#     if request.method == b'PATCH':
-#         found_excuse.content = request.form['content']
-#         found_excuse.is_believable = request.form['is_believable']
-#         db.session.add(found_excuse)
-#         db.session.commit()
-#         return redirect(url_for('excuse_index'))
+@app.route(
+    '/students/<int:student_id>/excuses/<int:excuse_id>',
+    methods=["GET", "PATCH", "DELETE"])
+def excuse_show(student_id, excuse_id):
+    
+    found_excuse = Excuse.query.get(excuse_id)
+    student_id = found_excuse.student_id
+    if request.method == b'PATCH':
+        found_excuse.content = request.form['content']
+        found_excuse.is_believable = bool(request.form['is_believable'])
+        db.session.add(found_excuse)
+        db.session.commit()
+        return redirect(url_for('excuse_index', student_id=student_id))
 #     if request.method == b'DELETE':
 #         db.session.delete(found_excuse)
 #         db.session.commit()
 #         return redirect(url_for('excuse_index'))
-#     return render_template('excuse_show.html', excuse=found_excuse)
+    found_student = Student.query.get(student_id)
+    if found_excuse.is_believable:
+        is_slacker = False
+    else:
+        is_slacker = True
+    return render_template('excuse_show.html', excuse=found_excuse, student=found_student, slacker=is_slacker)

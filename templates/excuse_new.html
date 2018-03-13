@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<form method="POST" action="{{url_for('excuse_index', student_id=student_id)}}">
+    <label for="content">New Excuse:</label>
+    <input type="text" name="content">
+    <label for="is_believable">Belivable Excuse?: </label>
+    <select name="is_believable">
+        <option value="True" selected=selected>True</option>
+        <option value="">False</option>
+    </select>
+    <input type="submit" value="Add Excuse!">
+</form>
+
+{% endblock %}
