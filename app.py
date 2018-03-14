@@ -114,22 +114,21 @@ def excuse_edit(student_id, excuse_id):
     '/students/<int:student_id>/excuses/<int:excuse_id>',
     methods=["GET", "PATCH", "DELETE"])
 def excuse_show(student_id, excuse_id):
-    
     found_excuse = Excuse.query.get(excuse_id)
-    student_id = found_excuse.student_id
     if request.method == b'PATCH':
         found_excuse.content = request.form['content']
         found_excuse.is_believable = bool(request.form['is_believable'])
         db.session.add(found_excuse)
         db.session.commit()
         return redirect(url_for('excuse_index', student_id=student_id))
-#     if request.method == b'DELETE':
-#         db.session.delete(found_excuse)
-#         db.session.commit()
-#         return redirect(url_for('excuse_index'))
-    found_student = Student.query.get(student_id)
-    if found_excuse.is_believable:
-        is_slacker = False
+    if request.method == b'DELETE':
+        db.session.delete(found_excuse)
+        db.session.commit()
+        return redirect(url_for('excuse_index', student_id=student_id))
     else:
-        is_slacker = True
-    return render_template('excuse_show.html', excuse=found_excuse, student=found_student, slacker=is_slacker)
+        found_student = found_excuse.student
+        if found_excuse.is_believable:
+            is_slacker = False
+        else:
+            is_slacker = True
+        return render_template('excuse_show.html', excuse=found_excuse, student=found_student, slacker=is_slacker)

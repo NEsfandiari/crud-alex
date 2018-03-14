@@ -17,6 +17,9 @@
   <input type="submit" value="Refine Excuse">
 </form>
 
+  <a href="{{url_for('excuse_show', excuse_id=excuse.id, student_id=student.id)}}">Go back</a>
+  <a href="{{url_for('excuse_index', student_id=student.id)}}">Return to all of {{ student.first_name }}'s excuses</a>
+
 <!-- <form method="POST" action="{{url_for('show', id=student.id)}}?_method=DELETE">
   <input type="submit" value="X">
 </form> -->

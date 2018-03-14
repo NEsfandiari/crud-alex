@@ -2,24 +2,25 @@
   
 <p>
     {{student.first_name}} {{student.last_name}}
-  </p>
+</p>
 
-  <p>
-    Reason: {{ excuse.content }}
-  </p>
+<p>
+  Reason: {{ excuse.content }}
+</p>
 
-  <p>
-    Is this excuse belivable? {{ excuse.is_believable }}
-  </p>
-  <p>
+<p>
+  Is this excuse belivable? {{ excuse.is_believable }}
+</p>
 
-    Is this student a slacker? {{ slacker }}
-  </p>
+<p>
+  Is this student a slacker? {{ slacker }}
+</p>
 
-  <a href="{{url_for('excuse_edit', excuse_id=excuse.id, student_id=student.id)}}">Edit {{ student.first_name }}</a>
-</div>
+<a href="{{url_for('excuse_edit', excuse_id=excuse.id, student_id=student.id)}}">Edit Excuse</a>
+<a href="{{url_for('excuse_index', student_id=student.id)}}">Return to all of {{ student.first_name }}'s excuses</a>
 
-<!-- <form method="POST" action="{{url_for('show', id=student.id)}}?_method=DELETE">
-  <input type="submit" value="X">
-</form> -->
+<form method="POST" action="{{url_for('excuse_show', student_id=student.id, excuse_id=excuse.id)}}?_method=DELETE">
+  <input type="submit" value="Delete">
+</form>
+
 {% endblock %}
