@@ -51,7 +51,7 @@ def root():
 def index():
     if request.method == 'POST':
         new_student = Student(request.form['first_name'],
-                              request.form['last_name'])
+        request.form['last_name'])
         db.session.add(new_student)
         db.session.commit()
         return redirect(url_for('index'))
